@@ -54,6 +54,7 @@ let triviaTemp = {
   
   let startGame = true;
   let answer = ""
+  let userChoice = ""
 // Emit events
 
 a.addEventListener('click', function(){
@@ -83,11 +84,15 @@ d.addEventListener('click', function(){
 
 
 // Listen for events
-// socket.on('choice', function(data) {
-//     console.log("Data returned", data)
+socket.on('choice', function(data) {
+    console.log("Data returned", data)
 
-    // a.innerHTML += '<p><strong>' + data + '</strong><p>'
-// })
+    a.innerHTML = '<p><strong>' + data.answerAStats + '%</strong><p>'
+    b.innerHTML = '<p><strong>' + data.answerBStats + '%</strong><p>'
+    c.innerHTML = '<p><strong>' + data.answerCStats + '%</strong><p>'
+    d.innerHTML = '<p><strong>' + data.answerDStats + '%</strong><p>'
+})
+
 
 //Game Loop
 let i = 0
@@ -102,13 +107,18 @@ if (startGame && i < triviaList.length) {
     })
     
     socket.on('counter', data => {
-        messageBoard.innerHTML = '<h1> Time Left: ' + data + '</h1>'
-        questionBoard.style.display = 'block';
-        if(data === 0) {
-            socket.emit('choice', {
-                    answer: answer
-                }); 
+        if(data > 0) {
+            messageBoard.innerHTML = '<h1> Time Left: ' + data + '</h1>';
         }
+        else if(data === 0) {
+            messageBoard.innerHTML = '<h1> Time\'s Up!!' + data + '</h1>';
+            userChoice = answer;
+            socket.emit('choice', {
+                answer: answer
+            }); 
+        }
+        questionBoard.style.display = 'block';
+        
     })
     console.log("TriviaList", triviaList[i].incorrect_answers[0])
     socket.emit('question', {

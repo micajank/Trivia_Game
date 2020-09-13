@@ -12,11 +12,13 @@ app.use(express.static('public'));
 
 // Socket Setup
 var io = socket(server);
-var answerA = 0;
-var answerB = 0;
-var answerC = 0;
-var answerD = 0;
-var QDetails = {}
+var answerAStats = 0;
+var answerBStats = 0;
+var answerCStats = 0;
+var answerDStats = 0;
+var QDetails = {};
+var userChoice = '';
+var totalAnswers = 0;
 
 io.on('connection', function(socket){
     console.log("Made socket connection", socket.id);
@@ -48,50 +50,53 @@ io.on('connection', function(socket){
                 if (counter === 0) {
                     io.sockets.emit('counter', 0);
                     console.log("Time's up!!!")
+                    // clearInterval(questionCountdown);
+                }
+                if(counter == -1) {
                     clearInterval(questionCountdown);
+                    totalAnswers = parseFloat(answerAStats + answerBStats + answerCStats + answerDStats);
+                    answerAStats = Math.floor((answerAStats / totalAnswers) * 100);
+                    answerBStats = Math.floor((answerBStats / totalAnswers) * 100);
+                    answerCStats = Math.floor((answerCStats / totalAnswers) * 100);
+                    answerDStats = Math.floor((answerDStats / totalAnswers) * 100);
+                    io.sockets.emit('counter', -1);
+                    io.sockets.emit('choice', {
+                        answerAStats,
+                        answerBStats,
+                        answerCStats,
+                        answerDStats
+                    })
                 }
             }, 1000);
         }, 5000);
         io.sockets.emit('preQuestion', message);
     });
-
+    
 
     socket.on('choice', function(data) {
         if(data.answer === 'a') {
-            answerA++;
-            console.log("AnswerA", answerA)
+            answerAStats++;
+            console.log("AnswerAStats", answerAStats)
         }
         if(data.answer === 'b') {
-            answerB++;
-            console.log("AnswerB", answerB)
+            answerBStats++;
+            console.log("AnswerB", answerBStats)
         }
         if(data.answer === 'c') {
-            answerC++;
-            console.log("AnswerC", answerC)
+            answerCStats++;
+            console.log("AnswerCStats", answerCStats)
         }
         if(data.answer === 'd') {
-            answerD++;
-            console.log("AnswerD", answerD)
+            answerDStats++;
+            console.log("AnswerD", answerDStats)
         }
+        // totalAnswers = parseFloat(answerAStats + answerBStats + answerCStats + answerDStats);
+        // answerAStats = Math.floor((answerAStats / totalAnswers) * 100);
+        // answerBStats = Math.floor((answerBStats / totalAnswers) * 100);
+        // answerCStats = Math.floor((answerCStats / totalAnswers) * 100);
+        // answerDStats = Math.floor((answerDStats / totalAnswers) * 100);
     })
-    // socket.on('choiceB', function(data) {
-    //     if(data.answer === 'b') {
-    //         answerB++;
-    //     }
-    //     console.log("AnswerB", answerB)
-    // })
-    // socket.on('choiceC', function(data) {
-    //     if(data.answer === 'c') {
-    //         answerC++;
-    //     }
-    //     console.log("AnswerC", answerC)
-    // })
-    // socket.on('choiceD', function(data) {
-    //     if(data.answer === 'd') {
-    //         answerD++;
-    //     }
-    //     console.log("AnswerD", answerD)
-    // })
+   
     socket.on('disconnect', () => {
         console.log("Client disconnected");
         // clearInterval(questionCountdown);
@@ -166,3 +171,21 @@ io.on('connection', function(socket){
 
 
 // server.listen(port, () => console.log(`Listening on port ${port}`));
+ // socket.on('choiceB', function(data) {
+    //     if(data.answer === 'b') {
+    //         answerBStats++;
+    //     }
+    //     console.log("AnswerB", answerBStats)
+    // })
+    // socket.on('choiceC', function(data) {
+    //     if(data.answer === 'c') {
+    //         answerCStats++;
+    //     }
+    //     console.log("AnswerCStats", answerCStats)
+    // })
+    // socket.on('choiceD', function(data) {
+    //     if(data.answer === 'd') {
+    //         answerDStats++;
+    //     }
+    //     console.log("AnswerD", answerDStats)
+    // })
