@@ -55,6 +55,8 @@ let triviaTemp = {
   let startGame = true;
   let answer = ""
   let userChoice = ""
+//   let tempAnswerArray = []
+//   let answerArray = []
 // Emit events
 
 a.addEventListener('click', function(){
@@ -98,6 +100,22 @@ socket.on('choice', function(data) {
 let i = 0
 if (startGame && i < triviaList.length) {
     console.log("start game");
+    let selectQuestion = triviaList.shift()
+    // let correctAnswerLocation = Math.floor(Math.random() * 4);
+    // for(let j = 0; j < 4; j++) {
+    //     if(correctAnswerLocation === j) {
+    //         answerArray.push(selectQuestion.correct_answer)
+    //     }
+    //     else {
+    //         let incorrectAnswer = selectQuestion.incorrect_answers.pop()
+    //         answerArray.push(incorrectAnswer)
+    //     } 
+    // }
+    // console.log(correctAnswerLocation)
+    // console.log(answerArray)
+   
+
+    console.log(selectQuestion)
     socket.emit('preQuestion', {
         questionNumber: (i+1)
     })
@@ -120,13 +138,14 @@ if (startGame && i < triviaList.length) {
         questionBoard.style.display = 'block';
         
     })
-    console.log("TriviaList", triviaList[i].incorrect_answers[0])
+    // console.log("TriviaList", triviaList[i].incorrect_answers[0])
     socket.emit('question', {
-        question: triviaList[i].question,
-        a: triviaList[i].correct_answer,
-        b: triviaList[i].incorrect_answers[0],
-        c: triviaList[i].incorrect_answers[1],
-        d: triviaList[i].incorrect_answers[2],
+        selectQuestion: selectQuestion
+        // question: triviaList[i].question,
+        // a: triviaList[i].correct_answer,
+        // b: triviaList[i].incorrect_answers[0],
+        // c: triviaList[i].incorrect_answers[1],
+        // d: triviaList[i].incorrect_answers[2],
     })
     socket.on('question', data=> {
        question.innerHTML = '<h1> Time Left: ' + data.question + '</h1>'

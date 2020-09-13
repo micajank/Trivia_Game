@@ -28,12 +28,31 @@ io.on('connection', function(socket){
         // Question displayer
         let message = "Get ready for Question #" + data.questionNumber + "!";
         socket.on('question', function(questionData) {
+            let answerArray = []
+            let correctAnswerLocation = Math.floor(Math.random() * 4);
+            for(let j = 0; j < 4; j++) {
+                if(correctAnswerLocation === j) {
+                    answerArray.push(questionData.selectQuestion.correct_answer)
+                }
+                else {
+                    let incorrectAnswer = questionData.selectQuestion.incorrect_answers.pop()
+                    answerArray.push(incorrectAnswer)
+                } 
+            }
+        console.log(correctAnswerLocation)
+        console.log(answerArray)
+        // console.log(answerArray[0])
             QDetails = {
                 question: questionData.question,
-                a: questionData.a,
-                b: questionData.b,
-                c: questionData.c,
-                d: questionData.d
+                a: answerArray[0],
+                b: answerArray[1],
+                c: answerArray[2],
+                d: answerArray[3],
+                correctAnswerLocation: correctAnswerLocation
+                // a: questionData.a,
+                // b: questionData.b,
+                // c: questionData.c,
+                // d: questionData.d
             }
         })
 
