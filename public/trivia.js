@@ -55,75 +55,67 @@ let triviaTemp = {
   let startGame = true;
   let answer = ""
   let userChoice = ""
+  let correctAnswer = ''
+
 //   let tempAnswerArray = []
 //   let answerArray = []
-// Emit events
 
+// Emit events
 a.addEventListener('click', function(){
     answer = a.value;
-    // socket.emit('choiceA', {
-    //     answer: a.value
-    // }); 
 });
 b.addEventListener('click', function(){
     answer = b.value;
-    // socket.emit('choiceB', {
-    //     answer: b.value
-    // });
 });
 c.addEventListener('click', function(){
     answer = c.value;
-    // socket.emit('choiceC', {
-    //     answer: c.value
-    // });
 });
 d.addEventListener('click', function(){
     answer = d.value;
-    // socket.emit('choiceD', {
-    //     answer: d.value
-    // });
 });
 
 
 // Listen for events
 socket.on('choice', function(data) {
-    console.log("Data returned", data)
 
     a.innerHTML = '<p><strong>' + data.answerAStats + '%</strong><p>'
     b.innerHTML = '<p><strong>' + data.answerBStats + '%</strong><p>'
     c.innerHTML = '<p><strong>' + data.answerCStats + '%</strong><p>'
     d.innerHTML = '<p><strong>' + data.answerDStats + '%</strong><p>'
+    console.log("UserChoice:", userChoice)
+    console.log("CorrectAnswer:", correctAnswer)
+    if(userChoice === correctAnswer) {
+        messageBoard.innerHTML = '<h1>CORRECT</h1>'
+    }
+    else {
+        messageBoard.innerHTML = '<h1>oops</h1>'
+    }
 })
+// socket.on('userChoice', function(data) {
+//     userChoice = data.userChoice
+//     console.log("userChoice", userChoice)
+// })
 
 
 //Game Loop
 let i = 0
+let j = 0
 if (startGame && i < triviaList.length) {
     console.log("start game");
     let selectQuestion = triviaList.shift()
-    // let correctAnswerLocation = Math.floor(Math.random() * 4);
-    // for(let j = 0; j < 4; j++) {
-    //     if(correctAnswerLocation === j) {
-    //         answerArray.push(selectQuestion.correct_answer)
-    //     }
-    //     else {
-    //         let incorrectAnswer = selectQuestion.incorrect_answers.pop()
-    //         answerArray.push(incorrectAnswer)
-    //     } 
-    // }
-    // console.log(correctAnswerLocation)
-    // console.log(answerArray)
-   
 
-    console.log(selectQuestion)
+    // Which # question to show
     socket.emit('preQuestion', {
-        questionNumber: (i+1)
+        questionNumber: (j+1)
     })
+    j++;
+
     socket.on('preQuestion', function(message) {
         messageBoard.innerHTML = '<h1>' + message + '</h1>'
         questionBoard.style.display = 'none';
     })
     
+    // Countdown during question
     socket.on('counter', data => {
         if(data > 0) {
             messageBoard.innerHTML = '<h1> Time Left: ' + data + '</h1>';
@@ -138,7 +130,6 @@ if (startGame && i < triviaList.length) {
         questionBoard.style.display = 'block';
         
     })
-    // console.log("TriviaList", triviaList[i].incorrect_answers[0])
     socket.emit('question', {
         selectQuestion: selectQuestion
         // question: triviaList[i].question,
@@ -153,5 +144,6 @@ if (startGame && i < triviaList.length) {
         b.innerHTML = '<h1> B: ' + data.b + '</h1>'
         c.innerHTML = '<h1> C: ' + data.c + '</h1>'
         d.innerHTML = '<h1> D: ' + data.d + '</h1>'
+        correctAnswer = data.correctAnswer
     })
 }

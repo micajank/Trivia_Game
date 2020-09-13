@@ -29,30 +29,37 @@ io.on('connection', function(socket){
         let message = "Get ready for Question #" + data.questionNumber + "!";
         socket.on('question', function(questionData) {
             let answerArray = []
+            let correctAnswer = ""
             let correctAnswerLocation = Math.floor(Math.random() * 4);
             for(let j = 0; j < 4; j++) {
                 if(correctAnswerLocation === j) {
-                    answerArray.push(questionData.selectQuestion.correct_answer)
+                    answerArray.push(questionData.selectQuestion.correct_answer);
+                    if (j === 0){
+                        correctAnswer = 'a';
+                    }
+                    else if (j === 1) {
+                        correctanswer='b'
+                    }
+                    else if (j === 2) {
+                        correctanswer='c'
+                    }
+                    else if (j === 3) {
+                        correctanswer='d'
+                    }
                 }
                 else {
                     let incorrectAnswer = questionData.selectQuestion.incorrect_answers.pop()
                     answerArray.push(incorrectAnswer)
                 } 
             }
-        console.log(correctAnswerLocation)
-        console.log(answerArray)
-        // console.log(answerArray[0])
+
             QDetails = {
-                question: questionData.question,
+                question: questionData.selectQuestion.question,
                 a: answerArray[0],
                 b: answerArray[1],
                 c: answerArray[2],
                 d: answerArray[3],
-                correctAnswerLocation: correctAnswerLocation
-                // a: questionData.a,
-                // b: questionData.b,
-                // c: questionData.c,
-                // d: questionData.d
+                correctAnswer: correctAnswer
             }
         })
 
@@ -85,6 +92,9 @@ io.on('connection', function(socket){
                         answerCStats,
                         answerDStats
                     })
+                    // socket.emit('userChoice', {
+                    //     userChoice
+                    // })
                 }
             }, 1000);
         }, 5000);
@@ -93,21 +103,18 @@ io.on('connection', function(socket){
     
 
     socket.on('choice', function(data) {
+        userChoice = data.answer;
         if(data.answer === 'a') {
             answerAStats++;
-            console.log("AnswerAStats", answerAStats)
         }
         if(data.answer === 'b') {
             answerBStats++;
-            console.log("AnswerB", answerBStats)
         }
         if(data.answer === 'c') {
             answerCStats++;
-            console.log("AnswerCStats", answerCStats)
         }
         if(data.answer === 'd') {
             answerDStats++;
-            console.log("AnswerD", answerDStats)
         }
         // totalAnswers = parseFloat(answerAStats + answerBStats + answerCStats + answerDStats);
         // answerAStats = Math.floor((answerAStats / totalAnswers) * 100);
