@@ -17,10 +17,17 @@ var answerAStats = 0;
 var answerBStats = 0;
 var answerCStats = 0;
 var answerDStats = 0;
+var answerA = 0;
+var answerB = 0;
+var answerC = 0;
+var answerD = 0;
+var noAnswer = 0;
 var noAnswerStats = 0;
 var QDetails = {};
 var userChoice = '';
 var totalAnswers = 0;
+var numberOfResponses = 0
+var acceptResponses = true
 
 io.on('connection', function(socket){
     console.log("Made socket connection", socket.id);
@@ -61,7 +68,6 @@ io.on('connection', function(socket){
                         answerArray.push(incorrectAnswer)
                     } 
                 }
-    
                 QDetails = {
                     question: questionData.selectQuestion.question,
                     a: answerArray[0],
@@ -75,7 +81,11 @@ io.on('connection', function(socket){
             // Break between questions
             var preQuestion = setTimeout(function() {
                 io.sockets.emit('question', QDetails)
-                
+                answerAStats = 0;
+                answerBStats = 0;
+                answerCStats = 0;
+                answerDStats = 0;
+                noAnswerStats = 0;
                 // Countdown
                 var counter = 10;
                 var questionCountdown = setInterval(function(){
@@ -87,34 +97,41 @@ io.on('connection', function(socket){
                         console.log("Time's up!!!")
                         // clearInterval(questionCountdown);
                     }
-                    if(counter == -1) {
+                    if(counter == -2) {
                         clearInterval(questionCountdown);
-                        totalAnswers = parseFloat(answerAStats + answerBStats + answerCStats + answerDStats);//+noAnswerStats
-                        answerAStats = Math.floor((answerAStats / totalAnswers) * 100);
-                        answerBStats = Math.floor((answerBStats / totalAnswers) * 100);
-                        answerCStats = Math.floor((answerCStats / totalAnswers) * 100);
-                        answerDStats = Math.floor((answerDStats / totalAnswers) * 100);
-                        console.log(answerAStats)
-                        console.log(answerBStats)
-                        console.log(answerCStats)
-                        console.log(answerDStats)
+                        answerAStats = 0;
+                        answerBStats = 0;
+                        answerCStats = 0;
+                        answerDStats = 0;
+                        totalAnswers = parseFloat(answerA + answerB + answerC + answerD + noAnswer);//+noAnswerStats
+                        answerAStats = Math.floor((answerA / totalAnswers) * 100);
+                        answerBStats = Math.floor((answerB / totalAnswers) * 100);
+                        answerCStats = Math.floor((answerC / totalAnswers) * 100);
+                        answerDStats = Math.floor((answerD / totalAnswers) * 100);
+                        console.log("AnswerAStats", answerAStats)
+                        console.log("AnswerBStats", answerBStats)
+                        console.log("AnswerCStats", answerCStats)
+                        console.log("AnswerDStats", answerDStats)
+                        let answer = ""
                         // noAnswerStats = Math.floor((noAnswerStats / totalAnswers) * 100);
                         io.sockets.emit('counter', -1);
                         io.sockets.emit('choice', {
                             answerAStats,
                             answerBStats,
                             answerCStats,
-                            answerDStats
+                            answerDStats,
+                            answer
                         })
-                        socketConnections = 0;
-                        answerAStats = 0;
-                        answerBStats = 0;
-                        answerCStats = 0;
-                        answerDStats = 0;
+                        answerA = 0;
+                        answerB = 0;
+                        answerC = 0;
+                        answerD = 0;
+                        noAnswer = 0;
                         noAnswerStats = 0;
                         QDetails = {};
                         userChoice = '';
                         totalAnswers = 0;
+                        numberOfResponses = 0
                         // socket.emit('userChoice', {
                         //     userChoice
                         // })
@@ -126,24 +143,52 @@ io.on('connection', function(socket){
         
     
         socket.on('choice', function(data) {
-            console.log("data", data)
-            userChoice = data.answer;
-            if(data.answer === 'a') {
-                answerAStats++;
-                console.log("a",answerAStats)
+            if (numberOfResponses < socketConnections) {
+                userChoice = data.answer;
+                numberOfResponses++
+                if(data.answer === 'a') {
+                    answerA++;
+                    console.log("AnswerA",answerA)
+                } 
+                else if(data.answer === 'b') {
+                    answerB++;
+                    console.log("AnswerB",answerB)
+                }
+                else if(data.answer === 'c') {
+                    answerC++;
+                    console.log("AnswerC",answerC)
+                }
+                else if(data.answer === 'd') {
+                    answerD++;
+                    console.log("AnswerD",answerD)
+                }
+                else if(data.answer === '') {
+                    noAnswer++;
+                    console.log("No answer", noAnswer)
+                }
+            } else {
+                acceptResponses = false
+                // console.log(acceptResponses)
             }
-            if(data.answer === 'b') {
-                answerBStats++;
-                console.log("b",answerBStats)
-            }
-            if(data.answer === 'c') {
-                answerCStats++;
-                console.log("c",answerCStats)
-            }
-            if(data.answer === 'd') {
-                answerDStats++;
-                console.log("d",answerDStats)
-            }
+            
+            // switch(data.answer && acceptResponses) {
+            //     case 'a':
+            //         answerAStats++;
+            //         console.log("AnswerASTats",answerAStats)
+            //         break;
+            //     case 'b':
+            //         answerBStats++;
+            //         console.log(answerBStats)
+            //         break;
+            //     case 'c':
+            //         answerCStats++;
+            //         console.log(answerCStats)
+            //         break;
+            //     case 'd':
+            //         answerDStats++;
+            //         console.log(answerDStats)
+            //         break;
+            // }
             // if(data.answer === '') {
             //     noAnswerStats++;
             // }
