@@ -37,3 +37,5 @@ After making it through steps 1-7 of initial setup, I discovered the conflicting
 10. Add additional categories for clients to choose from
 
 11. Add restart/return to landing screen
+
+#### Note: I feel like I really have come to understand how to manipulate sockets. At first I did not understand that informational differences between users must live on the front end, while uniformity in information must be delivered from the backend. 

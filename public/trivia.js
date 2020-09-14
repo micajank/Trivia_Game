@@ -52,30 +52,45 @@ let triviaTemp = {
   ]}
   let triviaList = triviaTemp.results;
   
-  let startGame = true;
+  let startGame = false;
   let answer = ""
   let userChoice = ""
-  let correctAnswer = ''
+  let correctAnswer = ""
 
-//   let tempAnswerArray = []
-//   let answerArray = []
+function clickA()  {
+    answer = a.value
+}
+function clickB() {
+    answer = b.value
+}
+function clickC() {
+    answer = c.value
+}
+function clickD() {
+    answer = d.value
+}
 
-// Emit events
-a.addEventListener('click', function(){
-    answer = a.value;
-});
-b.addEventListener('click', function(){
-    answer = b.value;
-});
-c.addEventListener('click', function(){
-    answer = c.value;
-});
-d.addEventListener('click', function(){
-    answer = d.value;
-});
+  // Emit events
+a.addEventListener('click', clickA)
+b.addEventListener('click', clickB)
+c.addEventListener('click', clickC)
+d.addEventListener('click', clickD)
+// b.addEventListener('click', function() {
+//     answer = b.value
+// })
+// c.addEventListener('click', function() {
+//     answer = c.value
+// })
+// d.addEventListener('click', function() {
+//     answer = d.value
+// })
 
 
 // Listen for events
+// socket.on('startGame', function(data) {
+//     startGame = true;
+//     gameLoop();
+// })
 socket.on('choice', function(data) {
 
     a.innerHTML = '<p><strong>' + data.answerAStats + '%</strong><p>'
@@ -89,7 +104,16 @@ socket.on('choice', function(data) {
     }
     else {
         messageBoard.innerHTML = '<h1>oops</h1>'
+        // a.removeEventListener('click', clickA)
+        // b.removeEventListener('click', clickB)
+        // c.removeEventListener('click', clickC)
+        // d.removeEventListener('click', clickD)
     }
+    var setInPlay = setTimeout(function() {
+        if(triviaList.length > 0) {
+            gameLoop()
+        }
+    }, 3000)
 })
 // socket.on('userChoice', function(data) {
 //     userChoice = data.userChoice
@@ -100,50 +124,60 @@ socket.on('choice', function(data) {
 //Game Loop
 let i = 0
 let j = 0
-if (startGame && i < triviaList.length) {
-    console.log("start game");
-    let selectQuestion = triviaList.shift()
-
-    // Which # question to show
-    socket.emit('preQuestion', {
-        questionNumber: (j+1)
-    })
-    j++;
-
-    socket.on('preQuestion', function(message) {
-        messageBoard.innerHTML = '<h1>' + message + '</h1>'
-        questionBoard.style.display = 'none';
-    })
+startGame = true;
+    if (startGame && i < triviaList.length) {
+        gameLoop()
+    }
+function gameLoop() {
+// startGame = true;
+//     if (startGame && i < triviaList.length) {
+        answer = ""
+        userChoice = ""
+        correctAnswer = ""
+        console.log("start game");
+        let selectQuestion = triviaList.shift()
     
-    // Countdown during question
-    socket.on('counter', data => {
-        if(data > 0) {
-            messageBoard.innerHTML = '<h1> Time Left: ' + data + '</h1>';
-        }
-        else if(data === 0) {
-            messageBoard.innerHTML = '<h1> Time\'s Up!!' + data + '</h1>';
-            userChoice = answer;
-            socket.emit('choice', {
-                answer: answer
-            }); 
-        }
-        questionBoard.style.display = 'block';
+        // Which # question to show
+        socket.emit('preQuestion', {
+            questionNumber: (j+1)
+        })
+        j++;
+    
+        socket.on('preQuestion', function(message) {
+            messageBoard.innerHTML = '<h1>' + message + '</h1>'
+            questionBoard.style.display = 'none';
+        })
         
-    })
-    socket.emit('question', {
-        selectQuestion: selectQuestion
-        // question: triviaList[i].question,
-        // a: triviaList[i].correct_answer,
-        // b: triviaList[i].incorrect_answers[0],
-        // c: triviaList[i].incorrect_answers[1],
-        // d: triviaList[i].incorrect_answers[2],
-    })
-    socket.on('question', data=> {
-       question.innerHTML = '<h1> Time Left: ' + data.question + '</h1>'
-        a.innerHTML = '<h1> A: ' + data.a + '</h1>'
-        b.innerHTML = '<h1> B: ' + data.b + '</h1>'
-        c.innerHTML = '<h1> C: ' + data.c + '</h1>'
-        d.innerHTML = '<h1> D: ' + data.d + '</h1>'
-        correctAnswer = data.correctAnswer
-    })
+        // Countdown during question
+        socket.on('counter', data => {
+            if(data > 0) {
+                messageBoard.innerHTML = '<h1> Time Left: ' + data + '</h1>';
+            }
+            else if(data === 0) {
+                messageBoard.innerHTML = '<h1> Time\'s Up!!' + data + '</h1>';
+                userChoice = answer;
+                socket.emit('choice', {
+                    answer: answer
+                }); 
+            }
+            questionBoard.style.display = 'block';
+            
+        })
+        socket.emit('question', {
+            selectQuestion: selectQuestion
+            // question: triviaList[i].question,
+            // a: triviaList[i].correct_answer,
+            // b: triviaList[i].incorrect_answers[0],
+            // c: triviaList[i].incorrect_answers[1],
+            // d: triviaList[i].incorrect_answers[2],
+        })
+        socket.on('question', data=> {
+           question.innerHTML = '<h1> Time Left: ' + data.question + '</h1>'
+            a.innerHTML = '<h1> A: ' + data.a + '</h1>'
+            b.innerHTML = '<h1> B: ' + data.b + '</h1>'
+            c.innerHTML = '<h1> C: ' + data.c + '</h1>'
+            d.innerHTML = '<h1> D: ' + data.d + '</h1>'
+            correctAnswer = data.correctAnswer
+        })
+    // }
 }
