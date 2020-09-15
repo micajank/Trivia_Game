@@ -8,6 +8,12 @@ var a = document.getElementById('a');
 var b = document.getElementById('b');
 var c = document.getElementById('c');
 var d = document.getElementById('d');
+
+var statsA = document.getElementById('stats-a');
+var statsB = document.getElementById('stats-b');
+var statsC = document.getElementById('stats-c');
+var statsD = document.getElementById('stats-d');
+
 var answers = document.querySelectorAll('.answer');
 
 // Trivia Data handling
@@ -135,6 +141,10 @@ function gameLoop() {
             }); 
         }
         questionBoard.style.display = 'block';
+        statsA.style.display = 'none';
+        statsB.style.display = 'none';
+        statsC.style.display = 'none';
+        statsD.style.display = 'none';
         
     })
 
@@ -142,10 +152,14 @@ function gameLoop() {
 
     socket.on('choice', function(data) {
         answer = data.answer
-        a.innerHTML = '<p><strong>' + data.answerAStats + '%</strong><p>'
-        b.innerHTML = '<p><strong>' + data.answerBStats + '%</strong><p>'
-        c.innerHTML = '<p><strong>' + data.answerCStats + '%</strong><p>'
-        d.innerHTML = '<p><strong>' + data.answerDStats + '%</strong><p>'
+        statsA.style.display = 'inline-block';
+        statsB.style.display = 'inline-block';
+        statsC.style.display = 'inline-block';
+        statsD.style.display = 'inline-block';
+        statsA.innerHTML = '<p>' + data.answerAStats + '%<p>'
+        statsB.innerHTML = '<p>' + data.answerBStats + '%<p>'
+        statsC.innerHTML = '<p>' + data.answerCStats + '%<p>'
+        statsD.innerHTML = '<p>' + data.answerDStats + '%<p>'
         console.log("UserChoice:", userChoice)
         console.log("CorrectAnswer:", correctAnswer)
         if(userChoice === correctAnswer) {
@@ -153,10 +167,10 @@ function gameLoop() {
         }
         else {
             messageBoard.innerHTML = '<h1>oops</h1>'
-            // a.removeEventListener('click', clickA)
-            // b.removeEventListener('click', clickB)
-            // c.removeEventListener('click', clickC)
-            // d.removeEventListener('click', clickD)
+            a.removeEventListener('click', clickA)
+            b.removeEventListener('click', clickB)
+            c.removeEventListener('click', clickC)
+            d.removeEventListener('click', clickD)
         }
         var setInPlay = setTimeout(function() {
             if(triviaList.length > 0) {

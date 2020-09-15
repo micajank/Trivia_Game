@@ -87,9 +87,9 @@ io.on('connection', function(socket){
                 answerDStats = 0;
                 noAnswerStats = 0;
                 // Countdown
-                var counter = 10;
+                var counter = 11;
                 var questionCountdown = setInterval(function(){
-                    io.sockets.emit('counter', counter);
+                    io.sockets.emit('counter', (counter - 1));
                     counter--;
     
                     if (counter === 0) {
