@@ -1,4 +1,12 @@
-var socket = io.connect('http://localhost:4000');
+// var socket = io.connect('http://localhost:4000');
+const socket = io();
+
+// Get userName and room from URL
+const { username, room } = Qs.parse(location.search, {
+    ignoreQueryPrefix: true
+})
+// Join game room
+socket.emit('joinRoom', { username, room });
 
 // Query DOM
 var messageBoard = document.getElementById('message-board');
@@ -13,6 +21,10 @@ var statsA = document.getElementById('stats-a');
 var statsB = document.getElementById('stats-b');
 var statsC = document.getElementById('stats-c');
 var statsD = document.getElementById('stats-d');
+
+// General Knowledge 15 https://opentdb.com/api.php?amount=15&category=9&difficulty=easy&type=multiple
+// Film 15 https://opentdb.com/api.php?amount=15&category=11&difficulty=easy&type=multiple
+// History 15 https://opentdb.com/api.php?amount=15&category=23&difficulty=easy&type=multiple
 
 var answers = document.querySelectorAll('.answer');
 
@@ -100,11 +112,18 @@ function sendQuestion(selectQuestion) {
 }
 
 
+// Listen for message event
+socket.on('message', data => {
+    console.log(data)
+})
 
 
 let i = 0
 let j = 0
-startGame = true;
+// socket.on('startGame', function(data) {
+    startGame = true;
+// })
+// startGame = true;
 if (startGame && i < triviaList.length) {
     gameLoop()
 }

@@ -1,31 +1,37 @@
 <!DOCTYPE html>
     <head>
         <meta charset="utf-8">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha512-v8ng/uGxkge3d1IJuEo6dJP8JViyvms0cly9pnbfRxT6/31c3dRWxIiwGnMSWwZjHKOuY3EVmijs7k1jz/9bLA==" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="/style.css">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Trivia Time</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha512-v8ng/uGxkge3d1IJuEo6dJP8JViyvms0cly9pnbfRxT6/31c3dRWxIiwGnMSWwZjHKOuY3EVmijs7k1jz/9bLA==" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <h1>Trivia Time</h1>
-        <div id="tivia">
-            <div id="gameboard">
-                <div id="message-board">
-                    Message board
+        <div class="login-board">
+            <form action="game.html">
+                <div class="form-control">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" placeholder="Enter username..." required />
                 </div>
-                <div id="question-board">
-                    <div id="question">Question</div>
-                    <button value="a" id="a" class="answer">a</button>
-                    <div class="stats" id="stats-a"></div>
-                    <button value="b" id="b" class="answer">b</button>
-                    <div class="stats" id="stats-b"></div>
-                    <button value="c" id="c" class="answer">c</button>
-                    <div class="stats" id="stats-c"></div>
-                    <button value="d" id="d" class="answer">d</button>
-                    <div class="stats" id="stats-d"></div>
+                <div class="form-control">
+                    <label for="room">Room</label>
+                    <select name="room" id="room">
+                        <option value="General Knowledge">General Knowledge</option>
+                        <option value="Film">Film</option>
+                        <option value="History">History</option>
+                    </select>
                 </div>
-            </div>
+                <button type="submit" class="btn">Join Game Room</button>
+            </form>
         </div>
-
-        <script src="/trivia.js"></script>
+        <!-- <script
+         src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.4/qs.min.js" 
+         integrity="sha512-BHtomM5XDcUy7tDNcrcX1Eh0RogdWiMdXl3wJcKB3PFekXb3l5aDzymaTher61u6vEZySnoC/SAj2Y/p918Y3w==" 
+         crossorigin="anonymous"
+         ></script> -->
+        <!-- <script src="/socket.io/socket.io.js"></script> -->
+        <!-- <script src="/trivia.js"></script>  -->
     </body>
 </html>
