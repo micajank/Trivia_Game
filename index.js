@@ -2,6 +2,7 @@ const path = require('path')
 const http = require('http');
 var express = require('express');
 var socket = require('socket.io');
+var axios = require('axios')
 
 const { userJoin, getCurrentUser, userLeaves, getRoomUsers } = require('./utils/users')
 
@@ -39,6 +40,7 @@ var userChoice = '';
 var totalAnswers = 0;
 var numberOfResponses = 0
 var acceptResponses = true
+var triviaList
 
 io.on('connection', function(socket){
     console.log("Made socket connection", socket.id);
@@ -48,19 +50,31 @@ io.on('connection', function(socket){
         // io.sockets.emit('startGame', {
         //     stuff: 1
         // })
+   
+    
     socket.on('joinRoom', ({ username, room }) => {
         const aUser = userJoin(socket.id, username, room);
         const user = getCurrentUser(socket.id)
         socket.join(aUser.room);
+        
         
         socket.broadcast.to(user.room).emit('message', `${user.username} has joined the game`);
         io.to(user.room).emit('roomUsers', {
             room: user.room,
             users: getRoomUsers(user.room)
         })
+       
 
         let users = getRoomUsers(user.room);
-        if (users.length > 2) {
+        if(users.legth <= 2) {
+            let waitingRoomMsg = "Waiting for more players..."
+            io.to(user.room).emit('waitingRoom', waitingRoomMsg)
+        }
+        else if (users.length > 2) {
+            // let begin = true
+            // io.to(user.room).emit('waitingRoom', {
+            //     begin
+            // })
             socket.on('preQuestion', function(data) {
         
                 // Question displayer
@@ -88,6 +102,7 @@ io.on('connection', function(socket){
                         }
                         else {
                             let incorrectAnswer = questionData.selectQuestion.incorrect_answers.pop()
+                            console.log('IncorrectAnswers', incorrectAnswer)
                             answerArray.push(incorrectAnswer)
                         } 
                     }
