@@ -53,24 +53,48 @@ io.on('connection', function(socket){
    
     
     socket.on('joinRoom', ({ username, room }) => {
-        const aUser = userJoin(socket.id, username, room);
+        const aUser = userJoin(socket.id, username, room, false);
         const user = getCurrentUser(socket.id)
         socket.join(aUser.room);
         
         
         socket.broadcast.to(user.room).emit('message', `${user.username} has joined the game`);
+        
         io.to(user.room).emit('roomUsers', {
             room: user.room,
             users: getRoomUsers(user.room)
         })
+        socket.emit('currentUser', {
+            user: getCurrentUser(socket.id)
+        })
+
+        let losersArray = []
+        socket.on('loser', function(data) {
+            // losersArray.push(data.currentUserId)
+            // console.log('loserarray', losersArray)
+            // console.log("user to remove", data.currentUserId)
+            // const loser = users.findIndex(user => user.id === data.currentUserId);
+            // console.log("L",loser)
+            const loser = userLeaves(socket.id)
+            // if(loser) {
+            //     users[loser].loser = true;
+            // }
+            // if (loser) {
+                // data.currentUser.loser = true;
+                io.to(user.room).emit('loser', {
+                    users: getRoomUsers(user.room),
+                })
+                console.log("minus loser user list", users)
+            // }
+        })
        
 
         let users = getRoomUsers(user.room);
-        if(users.legth <= 2) {
-            let waitingRoomMsg = "Waiting for more players..."
-            io.to(user.room).emit('waitingRoom', waitingRoomMsg)
-        }
-        else if (users.length > 2) {
+        // if(users.legth <= 2) {
+        //     let waitingRoomMsg = "Waiting for more players..."
+        //     io.to(user.room).emit('waitingRoom', waitingRoomMsg)
+        // }
+        if (users.length > 2) {
             // let begin = true
             // io.to(user.room).emit('waitingRoom', {
             //     begin

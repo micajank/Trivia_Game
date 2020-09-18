@@ -64,6 +64,11 @@ b.addEventListener('click', clickB)
 c.addEventListener('click', clickC)
 d.addEventListener('click', clickD)
 
+// Initialize gameboard as waiting room
+let waitingRoomMsg = "Waiting for more players..."
+messageBoard.innerHTML = '<h1>' + waitingRoomMsg + '</h1>'
+questionBoard.style.display = 'none';
+
 // Emit events
 
 // Which number of question to show
@@ -83,15 +88,37 @@ function sendQuestion(selectQuestion) {
     })
 }
 
+// User loses due to incorrect answer
+function userLeaves(id) {
+    const index = usersArray.findIndex(currentUser => currentUser.id === id);
+
+    if(index != -1) {
+        return usersArray.splice(index, 1)[0];
+    }
+}
+
 // Listen for message event
 socket.on('message', data => {
     console.log(data)
 })
-// socket.on('roomUsers', function(data) {
-//     triviaList = data.triviaList;
-//     console.log(triviaList)
-// })
 
+var usersArray
+var roomName
+var currentUser
+// Listen for roomUsers
+socket.on('roomUsers', function(data){
+    usersArray = data.users
+    roomName = data.room
+    // currentUser = data.user
+    console.log("Users",usersArray)
+    // console.log("User",currentUser)
+})
+
+socket.on('currentUser', function(data) {
+    currentUser = data.user
+})
+
+var loser = false
 var selectQuestion
 let i = 0
 let j = 0
@@ -100,16 +127,6 @@ let j = 0
     startGame = true;
 // })
 
-socket.on('waitingRoom', function(waitingRoomMsg) {
-    // messageBoard.innerHTML = '<h1>' + waitingRoomMsg + '</h1>'
-    // questionBoard.style.display = 'none';
-    // console.log("WaitingRoom", waitingRoomMsg)
-    // startGame = true;
-})
-
-// if (startGame) {
-//     gameLoop()
-// }
 
 //Game Loop
 
@@ -117,7 +134,7 @@ answer = ""
 userChoice = ""
 correctAnswer = ""
 console.log("start game");
-axios.get("https://opentdb.com/api.php?amount=15&category=9&difficulty=easy&type=multiple")
+axios.get("https://opentdb.com/api.php?amount=3&category=9&difficulty=easy&type=multiple")
 .then(function (response) {
     triviaList = response.data.results;
     console.log(triviaList)
@@ -128,10 +145,9 @@ axios.get("https://opentdb.com/api.php?amount=15&category=9&difficulty=easy&type
     if (startGame) {
         gameLoop()
     }
-    messageBoard.innerHTML = '<h1>' + waitingRoomMsg + '</h1>'
-    questionBoard.style.display = 'none';
-
+    
     function gameLoop() {
+        
         if (j === 0) {
             selectQuestion = triviaList.shift()
             console.log("Select Question", selectQuestion)
@@ -153,7 +169,7 @@ axios.get("https://opentdb.com/api.php?amount=15&category=9&difficulty=easy&type
         // Countdown during question
         socket.on('counter', data => {
             if(data > 0) {
-                messageBoard.innerHTML = '<h1> Time Left: ' + data + '</h1>';
+                messageBoard.innerHTML = '<h1> Time Left: <br>' + data + '</h1>';
             }
             else if(data === 0) {
                 messageBoard.innerHTML = '<h1> Time\'s Up!!' + data + '</h1>';
@@ -187,17 +203,56 @@ axios.get("https://opentdb.com/api.php?amount=15&category=9&difficulty=easy&type
             console.log("CorrectAnswer:", correctAnswer)
             if(userChoice === correctAnswer) {
                 messageBoard.innerHTML = '<h1>CORRECT</h1>'
+
+                console.log("currentUser",currentUser)
+                socket.on('loser', function(data) {
+                    usersArray = data.users
+                    console.log("Updated users from backend line 218", usersArray)
+                })
             }
             else {
+                socket.emit('loser', {
+                    currentUserId: currentUser.id
+                })
                 messageBoard.innerHTML = '<h1>oops</h1>'
+                // currentUser.loser = true;
+                console.log("currentUser",currentUser)
+                socket.on('loser', function(data) {
+                    usersArray = data.users
+                    console.log("Updated users from backend line 218", usersArray)
+                })
+               
                 // a.removeEventListener('click', clickA)
                 // b.removeEventListener('click', clickB)
                 // c.removeEventListener('click', clickC)
                 // d.removeEventListener('click', clickD)
             }
             var setInPlay = setTimeout(function() {
+                socket.on('loser', function(data) {
+                    usersArray = data.users
+                    console.log("Updated users from backend line 229", usersArray)
+                })
                 if(triviaList.length > 0) {
-                    gameLoop()
+                    if(usersArray.length > 1) {
+                        gameLoop()
+                    }
+                    else if (usersArray.length == 1) {
+                        messageBoard.innerHTML = '<h1>'+ usersArray[0].username + ' is the WINNER!</h1>'
+                    }
+                }
+                else if (triviaList.length === 0 && usersArray.length == 1) {
+                    messageBoard.innerHTML = '<h1>'+ usersArray[0].username + ' is the WINNER!</h1>'
+                }
+                else if (triviaList.length === 0 && usersArray.length > 1) {
+                    for(let i = 0; i < usersArray.length; i++) {
+                        if(usersArray[i].loser === false) {
+                            console.log("winners",usersArray[i])
+                            messageBoard.innerHTML += '<h1>'+ usersArray[i].username + ' is a WINNER!</h1>'
+                        }
+                        else {
+                            messageBoard.innerHTML += '<h1> Oooo yikes...no one is a winner today!</h1>'
+                        }
+                    }
                 }
             }, 3000)
         })
