@@ -105,13 +105,23 @@ socket.on('message', data => {
 var usersArray
 var roomName
 var currentUser
+var category
 // Listen for roomUsers
 socket.on('roomUsers', function(data){
     usersArray = data.users
     roomName = data.room
-    // currentUser = data.user
     console.log("Users",usersArray)
-    // console.log("User",currentUser)
+    
+    if(roomName == "General Knowledge") {
+        category = 9
+    }
+    else if (roomName == "Film") {
+        category = 11
+    }
+    else if (roomName == "History") {
+        category = 23
+    }
+    callAPI()
 })
 
 socket.on('currentUser', function(data) {
@@ -134,7 +144,11 @@ answer = ""
 userChoice = ""
 correctAnswer = ""
 console.log("start game");
-axios.get("https://opentdb.com/api.php?amount=3&category=9&difficulty=easy&type=multiple")
+
+function callAPI () {
+
+
+axios.get(`https://opentdb.com/api.php?amount=3&category=${category}&difficulty=easy&type=multiple`)
 .then(function (response) {
     triviaList = response.data.results;
     console.log(triviaList)
@@ -205,7 +219,7 @@ axios.get("https://opentdb.com/api.php?amount=3&category=9&difficulty=easy&type=
                 messageBoard.innerHTML = '<h1>CORRECT</h1>'
 
                 console.log("currentUser",currentUser)
-                socket.on('loser', function(data) {
+                socket.once('loser', function(data) {
                     usersArray = data.users
                     console.log("Updated users from backend line 218", usersArray)
                 })
@@ -217,7 +231,7 @@ axios.get("https://opentdb.com/api.php?amount=3&category=9&difficulty=easy&type=
                 messageBoard.innerHTML = '<h1>oops</h1>'
                 // currentUser.loser = true;
                 console.log("currentUser",currentUser)
-                socket.on('loser', function(data) {
+                socket.once('loser', function(data) {
                     usersArray = data.users
                     console.log("Updated users from backend line 218", usersArray)
                 })
@@ -228,10 +242,11 @@ axios.get("https://opentdb.com/api.php?amount=3&category=9&difficulty=easy&type=
                 // d.removeEventListener('click', clickD)
             }
             var setInPlay = setTimeout(function() {
-                socket.on('loser', function(data) {
+                socket.once('loser', function(data) {
                     usersArray = data.users
                     console.log("Updated users from backend line 229", usersArray)
                 })
+                // win/lose functionality
                 if(triviaList.length > 0) {
                     if(usersArray.length > 1) {
                         gameLoop()
@@ -239,21 +254,40 @@ axios.get("https://opentdb.com/api.php?amount=3&category=9&difficulty=easy&type=
                     else if (usersArray.length == 1) {
                         messageBoard.innerHTML = '<h1>'+ usersArray[0].username + ' is the WINNER!</h1>'
                     }
-                }
-                else if (triviaList.length === 0 && usersArray.length == 1) {
-                    messageBoard.innerHTML = '<h1>'+ usersArray[0].username + ' is the WINNER!</h1>'
-                }
-                else if (triviaList.length === 0 && usersArray.length > 1) {
-                    for(let i = 0; i < usersArray.length; i++) {
-                        if(usersArray[i].loser === false) {
-                            console.log("winners",usersArray[i])
-                            messageBoard.innerHTML += '<h1>'+ usersArray[i].username + ' is a WINNER!</h1>'
-                        }
-                        else {
-                            messageBoard.innerHTML += '<h1> Oooo yikes...no one is a winner today!</h1>'
-                        }
+                    else if(usersArray.length === 0) {
+                        console.log("List > 0 and users = 0")
+                        messageBoard.innerHTML = '<h1> Oooo yikes...no one is a winner today!</h1>'
                     }
                 }
+                else if(triviaList.length === 0) {
+                    if (usersArray.length > 1) {
+                        messageBoard.innerHTML += '<h1 The winners are...>'
+                        for(let i = 0; i < usersArray.length; i++) {
+                            messageBoard.innerHTML += '<br> ' + usersArray[i].username
+                        }
+                    }
+                    else if (usersArray.length === 1) {
+                        messageBoard.innerHTML = '<h1>'+ usersArray[0].username + ' is the WINNER!</h1>'
+                    }
+                    else if(usersArray.length === 0) {
+                        console.log("List > 0 and users = 0")
+                        messageBoard.innerHTML = '<h1> Oooo yikes...no one is a winner today!</h1>'
+                    }
+                }
+                // else if (triviaList.length === 0 && usersArray.length == 1) {
+                //     messageBoard.innerHTML = '<h1>'+ usersArray[0].username + ' is the WINNER!</h1>'
+                // }
+                // else if (triviaList.length === 0 && usersArray.length > 1) {
+                //     for(let i = 0; i < usersArray.length; i++) {
+                //         if(usersArray[i].loser === false) {
+                //             console.log("winners",usersArray[i])
+                //             messageBoard.innerHTML += '<h1>'+ usersArray[i].username + ' is a WINNER!</h1>'
+                //         }
+                //         else {
+                //             messageBoard.innerHTML += '<h1> Oooo yikes...no one is a winner today!</h1>'
+                //         }
+                //     }
+                // }
             }, 3000)
         })
 
@@ -270,6 +304,7 @@ axios.get("https://opentdb.com/api.php?amount=3&category=9&difficulty=easy&type=
 .catch(function (err) {
     console.log(`Error was made:\n ${err}`);
 })
+}
 
 // Listen for events
 // socket.on('startGame', function(data) {
