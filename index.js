@@ -174,7 +174,7 @@ io.on('connection', function(socket){
             socket.on('choice', function(data) {
                     userChoice = data.answer;
                     responses.push(data.answer)
-                    if(responses.length >= socketConnections) {
+                    // if(responses.length >= socketConnections) {
                         console.log(user, "answer:", data.answer)
                         if(data.answer === 'a') {
                             answerA++;
@@ -197,7 +197,7 @@ io.on('connection', function(socket){
                             console.log("No answer", noAnswer)
                         }
 
-                    }
+                    // }
                 
             })
 

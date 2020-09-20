@@ -145,7 +145,7 @@ function callAPI () {
     axios.get(`https://opentdb.com/api.php?amount=10&category=${category}&difficulty=easy&type=multiple`)
     .then(function (response) {
         triviaList = response.data.results;
-        console.log(triviaList)
+        // console.log(triviaList)
 
         
     // if (startGame) {
@@ -221,7 +221,6 @@ function callAPI () {
                 leaveBtn.style.visibility = "visible";
 
                 currentUser.loser = true;
-                console.log("currentUser",currentUser)
                 socket.once('loser', function(data) {
                     usersArray = data.users
                 })
@@ -240,7 +239,6 @@ function callAPI () {
                         messageBoard.innerHTML = '<h1>'+ usersArray[0].username + ' is the WINNER!</h1>'
                     }
                     else if(usersArray.length === 0) {
-                        console.log("List > 0 and users = 0")
                         messageBoard.innerHTML = '<h1> Oooo yikes...no one is a winner today!</h1>'
                     }
                 }
@@ -258,7 +256,6 @@ function callAPI () {
                         }
                     }
                     else if(usersArray.length === 0) {
-                        console.log("List > 0 and users = 0")
                         messageBoard.innerHTML = '<h1> Oooo yikes...no one is a winner today!</h1>'
                     }
                 }
@@ -266,7 +263,7 @@ function callAPI () {
         })
 
         socket.once('question', data=> {
-            question.innerHTML = '<h1> Time Left: ' + data.question + '</h1>'
+            question.innerHTML = '<h1>' + data.question + '</h1>'
                 a.innerHTML = '<h1> A: ' + data.a + '</h1>'
                 b.innerHTML = '<h1> B: ' + data.b + '</h1>'
                 c.innerHTML = '<h1> C: ' + data.c + '</h1>'
