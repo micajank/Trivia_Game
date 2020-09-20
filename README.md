@@ -1,6 +1,15 @@
 # Trivia_Game
 An HQ Trivia style game to play with friends, family, and people all over the world
 
+#### User Instructions
+1. fork and clone the project
+2. npm install (for dependencies)
+3. in the terminal, run "node index.js" to begin the program
+4. open up 3 web tabs ( I have kept the number of players needed to start a game to 3 for easier testing and reviewing purposes, but the game can manage many more clients at a time)
+5. enter a name and pick a room , then click Join Game Room
+##### Note. In the last few day of programming I ran into slow responses from the API. Once three players are in the room, the game will begin on its own, but it might lag for a bit due to API crashes. Hopefully this is not the case when you use it!
+6. Once a game has started, another entry into the room will break the counting function, but I am hoping to find a solution to this in my own time
+
 ## Project Planning
 ### Stack
 Node/Express app with a React front-end
@@ -21,6 +30,10 @@ Sockets.io
 
 ## Restart Initiated
 After making it through steps 1-7 of initial setup, I discovered the conflicting processes of sockets and react. After trying everything I could think of, as well as reaching out to colleagues (without success as no one I know has tried to use React with sockets) I have decided to start again with a more common stack for sockets: Express/Node backend, with simple HTML, CSS, and JavaScript in the front end.
+
+Link to Original Repository for React Project:
+https://github.com/micajank/HQ_Trivia_Project
+
 
 ### Restart Steps
 1. npm init to create node application
@@ -49,15 +62,6 @@ I have pinpointed the issue but I cannot find a solution with my research. Which
 Another significant issue that I have yet to find a solution for, is how to remove a room (or simply make it inaccessible to other clients) once a game has begun. I tried removing the option via DOM manipulation, but quickly realized I could not access the landing page HTML file once I had switched to the game.HTML file. And I also could not access it via the backend, which would have had the most authority to make that change since front end changes only really apply to individual clients, rather than all. In other words, removing the room 'History' as an option in the login page from the client side, might have only removed it for one user. I am still looking into a way to solve this problem.
 
 I enjoyed learning about socket.io and discovering the many ways it works well, and also some of its disadvantages. I would like to continue working on the two issues I have had to leave unfinished during this window, in my own time. 
-
-#### User Instructions
-1. fork and clone the project
-2. npm install (for dependencies)
-3. in the terminal, run "node index.js" to begin the program
-4. open up 3 web tabs ( I have kept the number of players needed to start a game to 3 for easier testing and reviewing purposes, but the game can manage many more clients at a time)
-5. enter a name and pick a room , then click Join Game Room
-##### Note. In the last few day of programming I ran into slow responses from the API. Once three players are in the room, the game will begin on its own, but it might lag for a bit due to API crashes. Hopefully this is not the case when you use it!
-6. Once a game has started, another entry into the room will break the counting function, but I am hoping to find a solution to this in my own time
 
 
 #### Resources:
