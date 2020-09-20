@@ -1,4 +1,3 @@
-// var socket = io.connect('http://localhost:4000');
 const socket = io();
 
 // Get userName and room from URL
@@ -141,16 +140,6 @@ function callAPI () {
     .then(function (response) {
         triviaList = response.data.results;
         console.log(triviaList)
-        // selectQuestion = triviaList.shift()
-        // console.log("Select Question", selectQuestion)
-        // })
-
-        // var film = document.getElementsByTagName("option").Film
-        // var history = document.getElementsByTagName("option").History
-        // var celebrities = document.getElementsByTagName("option").Celebrities
-        // var computers = document.getElementsByTagName("option").Computers
-        // var mythology = document.getElementsByTagName("option").Mythology
-        // .style.display = 'none';
 
         
     if (startGame) {
@@ -158,10 +147,7 @@ function callAPI () {
     }
     
     function gameLoop() {
-        // if (category === 26) {
-        //     celebrities.style.display = 'none';
-        // }
-        // categoryListItem.style.display = 'none';
+
         if (j === 0) {
             selectQuestion = triviaList.shift()
             console.log("Select Question", selectQuestion)
@@ -230,8 +216,7 @@ function callAPI () {
                 messageBoard.innerHTML = '<h1>OOPS</h1>'
                 btn.style.visibility = "hidden";
                 leaveBtn.style.visibility = "visible";
-                // btn.innerHTML = 'You lost. Click here to exit.'
-                // btn.innerHTML.style.margin = '0px 0px 0px calc(50% - 100px)';
+
                 currentUser.loser = true;
                 console.log("currentUser",currentUser)
                 socket.once('loser', function(data) {
@@ -239,10 +224,6 @@ function callAPI () {
                     console.log("Updated users from backend line 218", usersArray)
                 })
                
-                // a.removeEventListener('click', clickA)
-                // b.removeEventListener('click', clickB)
-                // c.removeEventListener('click', clickC)
-                // d.removeEventListener('click', clickD)
             }
             var setInPlay = setTimeout(function() {
                 socket.once('loser', function(data) {
@@ -296,205 +277,4 @@ function callAPI () {
     .catch(function (err) {
         console.log(`Error was made:\n ${err}`);
     })
-    // categoryListItem.style.display = 'block';
 }
-
-// Listen for events
-// socket.on('startGame', function(data) {
-//     startGame = true;
-//     gameLoop();
-// })
-// socket.on('choice', function(data) {
-
-//     a.innerHTML = '<p><strong>' + data.answerAStats + '%</strong><p>'
-//     b.innerHTML = '<p><strong>' + data.answerBStats + '%</strong><p>'
-//     c.innerHTML = '<p><strong>' + data.answerCStats + '%</strong><p>'
-//     d.innerHTML = '<p><strong>' + data.answerDStats + '%</strong><p>'
-//     console.log("UserChoice:", userChoice)
-//     console.log("CorrectAnswer:", correctAnswer)
-//     if(userChoice === correctAnswer) {
-//         messageBoard.innerHTML = '<h1>CORRECT</h1>'
-//     }
-//     else {
-//         messageBoard.innerHTML = '<h1>oops</h1>'
-//         // a.removeEventListener('click', clickA)
-//         // b.removeEventListener('click', clickB)
-//         // c.removeEventListener('click', clickC)
-//         // d.removeEventListener('click', clickD)
-//     }
-//     var setInPlay = setTimeout(function() {
-//         if(triviaList.length > 0) {
-//             gameLoop()
-//         }
-//     }, 3000)
-// })
-// socket.on('userChoice', function(data) {
-//     userChoice = data.userChoice
-//     console.log("userChoice", userChoice)
-// })
-
-
-// Save
-// var socket = io.connect('http://localhost:4000');
-
-// // Query DOM
-// var messageBoard = document.getElementById('message-board');
-// var questionBoard = document.getElementById('question-board');
-// var question = document.getElementById('question');
-// var a = document.getElementById('a');
-// var b = document.getElementById('b');
-// var c = document.getElementById('c');
-// var d = document.getElementById('d');
-// var answers = document.querySelectorAll('.answer');
-
-// // Trivia Data handling
-// let triviaTemp = {
-//     "results": [
-//     {
-//         "category": "General Knowledge",
-//         "type": "multiple",
-//         "difficulty": "easy",
-//         "question": "Which country, not including Japan, has the most people of japanese decent?",
-//         "correct_answer": "Brazil",
-//         "incorrect_answers": [
-//         "China",
-//         "South Korea",
-//         "United States of America"
-//       ]
-//       },
-//       {
-//         "category": "General Knowledge",
-//         "type": "multiple",
-//         "difficulty": "easy",
-//         "question": "Terry Gilliam was an animator that worked with which British comedy group?",
-//         "correct_answer": "Monty Python",
-//         "incorrect_answers": [
-//         "The Goodies&lrm;",
-//         "The League of Gentlemen&lrm;",
-//         "The Penny Dreadfuls"
-//       ]
-//       },
-//       {
-//         "category": "General Knowledge",
-//         "type": "multiple",
-//         "difficulty": "easy",
-//         "question": "When one is &quot;envious&quot;, they are said to be what color?",
-//         "correct_answer": "Green",
-//         "incorrect_answers": [
-//         "Red",
-//         "Blue",
-//         "Yellow"
-//         ]
-//         }
-//   ]}
-//   let triviaList = triviaTemp.results;
-  
-//   let startGame = false;
-//   let answer = ""
-//   let userChoice = ""
-//   let correctAnswer = ""
-
-// function clickA()  {
-//     answer = a.value
-// }
-// function clickB() {
-//     answer = b.value
-// }
-// function clickC() {
-//     answer = c.value
-// }
-// function clickD() {
-//     answer = d.value
-// }
-
-//   // Emit events
-// a.addEventListener('click', clickA)
-// b.addEventListener('click', clickB)
-// c.addEventListener('click', clickC)
-// d.addEventListener('click', clickD)
-
-
-
-
-// //Game Loop
-// let i = 0
-// let j = 0
-// startGame = true;
-//     if (startGame && i < triviaList.length) {
-//         gameLoop()
-//     }
-
-// function gameLoop() {
-
-
-//         answer = ""
-//         console.log("Round answer value", answer)
-//         userChoice = ""
-//         correctAnswer = ""
-//         console.log("start game");
-//         let selectQuestion = triviaList.shift()
-    
-//         // Which # question to show
-//         socket.emit('preQuestion', {
-//             questionNumber: (j+1)
-//         })
-//         j++;
-    
-//         socket.on('preQuestion', function(message) {
-//             messageBoard.innerHTML = '<h1>' + message + '</h1>'
-//             questionBoard.style.display = 'none';
-//         })
-        
-//         // Countdown during question
-//         socket.on('counter', data => {
-//             if(data > 0) {
-//                 messageBoard.innerHTML = '<h1> Time Left: ' + data + '</h1>';
-//             }
-//             else if(data === 0) {
-//                 messageBoard.innerHTML = '<h1> Time\'s Up!!' + data + '</h1>';
-//                 userChoice = answer;
-//                 console.log("answer", answer)
-//                 socket.emit('choice', {
-//                     answer: answer
-//                 }); 
-//             }
-//             questionBoard.style.display = 'block';
-            
-//         })
-//         socket.emit('question', {
-//             selectQuestion: selectQuestion
-//         })
-//         socket.on('choice', function(data) {
-//             answer = data.answer
-//             a.innerHTML = '<p><strong>' + data.answerAStats + '%</strong><p>'
-//             b.innerHTML = '<p><strong>' + data.answerBStats + '%</strong><p>'
-//             c.innerHTML = '<p><strong>' + data.answerCStats + '%</strong><p>'
-//             d.innerHTML = '<p><strong>' + data.answerDStats + '%</strong><p>'
-//             console.log("UserChoice:", userChoice)
-//             console.log("CorrectAnswer:", correctAnswer)
-//             if(userChoice === correctAnswer) {
-//                 messageBoard.innerHTML = '<h1>CORRECT</h1>'
-//             }
-//             else {
-//                 messageBoard.innerHTML = '<h1>oops</h1>'
-//                 // a.removeEventListener('click', clickA)
-//                 // b.removeEventListener('click', clickB)
-//                 // c.removeEventListener('click', clickC)
-//                 // d.removeEventListener('click', clickD)
-//             }
-//             var setInPlay = setTimeout(function() {
-//                 if(triviaList.length > 0) {
-                    
-//                     gameLoop()
-//                 }
-//             }, 3000)
-//         })
-//         socket.on('question', data=> {
-//            question.innerHTML = '<h1> Time Left: ' + data.question + '</h1>'
-//             a.innerHTML = '<h1> A: ' + data.a + '</h1>'
-//             b.innerHTML = '<h1> B: ' + data.b + '</h1>'
-//             c.innerHTML = '<h1> C: ' + data.c + '</h1>'
-//             d.innerHTML = '<h1> D: ' + data.d + '</h1>'
-//             correctAnswer = data.correctAnswer
-//         })
-// }

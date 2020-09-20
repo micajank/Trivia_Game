@@ -1,5 +1,10 @@
 body {
     margin: 0 auto;
+    background-image: url('./assets/wolfgangRottmannUnsplash.jpg');
+}
+
+h1 {
+    font-size: 20px;
 }
 
 #message-board {
@@ -44,8 +49,9 @@ body {
 
 }
 
-h1 {
-    font-size: 20px;
+.form-control {
+    width: 70%;
+    margin: 30px 30px 30px 75px;
 }
 
 .login-board {
@@ -58,38 +64,12 @@ h1 {
     background-color: rgba(255, 255, 255, .5);
 }
 
-.form-control {
-    width: 70%;
-    margin: 30px 30px 30px 75px;
-}
-
 .btn {
     margin: 21px 39% 31px 40%;
     text-align: center;
     align-items: center;
     justify-content: center;
     width: 35%;
-}
-
-#btn-leave{
-    border: solid black 1px;
-    padding: 10px;
-    background-color: rgba(243, 127, 60, 06);
-    text-align: center;
-    width: 50px;
-    margin-left: calc(50% - 40px);
-}
-#btn-loser-leave{
-    border: solid black 1px;
-    padding: 10px;
-    background-color: rgba(243, 127, 60, 06);
-    text-align: center;
-    width: 50px;
-    margin-left: calc(50% - 100px);
-}
-
-body {
-    background-image: url('./assets/wolfgangRottmannUnsplash.jpg');
 }
 
 .title {
@@ -110,4 +90,47 @@ body {
     margin-left: calc(50%-30%);
     margin-left: calc(50% - 432px);
     background-color: rgba(150, 58, 158, 0.8);
+}
+
+#btn-leave{
+    border: solid black 1px;
+    padding: 10px;
+    background-color: rgba(243, 127, 60, 06);
+    text-align: center;
+    width: 50px;
+    margin-left: calc(50% - 40px);
+}
+
+#btn-loser-leave{
+    border: solid black 1px;
+    padding: 10px;
+    background-color: rgba(243, 127, 60, 06);
+    text-align: center;
+    width: 50px;
+    margin-left: calc(50% - 100px);
+}
+
+@media only screen 
+  and (min-device-width: 414px) 
+  and (max-device-width: 736px) 
+  and (-webkit-min-device-pixel-ratio: 3) { 
+
+      
+    
+    .login-board {
+        margin: 10% 10% 30% 10%;
+    }
+    
+    #message-board {
+        width: 100%;
+    }
+        
+    #gameboard {
+        width: 88%;
+    }
+
+    .btn {
+        margin: 20px 26% 31px 33%;
+    }
+
 }
