@@ -61,9 +61,7 @@ io.on('connection', function(socket){
                 users: getRoomUsers(user.room),
             })
         }, 2000)
-            console.log("minus loser user list", users)
-
-
+            // console.log("minus loser user list", users)
         })
        
 
@@ -172,35 +170,34 @@ io.on('connection', function(socket){
                 io.to(user.room).emit('preQuestion', message);
             });
             
-        
+            var responses = []
             socket.on('choice', function(data) {
-                if (numberOfResponses < socketConnections) {
                     userChoice = data.answer;
-                    numberOfResponses++
-                    if(data.answer === 'a') {
-                        answerA++;
-                        console.log("AnswerA",answerA)
-                    } 
-                    else if(data.answer === 'b') {
-                        answerB++;
-                        console.log("AnswerB",answerB)
+                    responses.push(data.answer)
+                    if(responses.length >= socketConnections) {
+                        console.log(user, "answer:", data.answer)
+                        if(data.answer === 'a') {
+                            answerA++;
+                            console.log("AnswerA",answerA)
+                        } 
+                        else if(data.answer === 'b') {
+                            answerB++;
+                            console.log("AnswerB",answerB)
+                        }
+                        else if(data.answer === 'c') {
+                            answerC++;
+                            console.log("AnswerC",answerC)
+                        }
+                        else if(data.answer === 'd') {
+                            answerD++;
+                            console.log("AnswerD",answerD)
+                        }
+                        else if(data.answer === '') {
+                            noAnswer++;
+                            console.log("No answer", noAnswer)
+                        }
+
                     }
-                    else if(data.answer === 'c') {
-                        answerC++;
-                        console.log("AnswerC",answerC)
-                    }
-                    else if(data.answer === 'd') {
-                        answerD++;
-                        console.log("AnswerD",answerD)
-                    }
-                    else if(data.answer === '') {
-                        noAnswer++;
-                        console.log("No answer", noAnswer)
-                    }
-                } else {
-                    acceptResponses = false
-                    // console.log(acceptResponses)
-                }
                 
             })
 

@@ -73,6 +73,12 @@ function sendQuestion(selectQuestion) {
     })
 }
 
+function sendAnswer(answer) {
+    socket.emit('choice', {
+        answer: answer
+    }); 
+}
+
 // User loses due to incorrect answer
 function userLeaves(id) {
     const index = usersArray.findIndex(currentUser => currentUser.id === id);
@@ -87,10 +93,10 @@ socket.on('message', data => {
     console.log(data)
 })
 
-var usersArray
-var roomName
-var currentUser
-var category
+var usersArray;
+var roomName;
+var currentUser;
+var category;
 
 // Listen for roomUsers
 socket.on('roomUsers', function(data){
@@ -136,15 +142,15 @@ console.log("start game");
 function callAPI () {
 
     
-    axios.get(`https://opentdb.com/api.php?amount=3&category=${category}&difficulty=easy&type=multiple`)
+    axios.get(`https://opentdb.com/api.php?amount=10&category=${category}&difficulty=easy&type=multiple`)
     .then(function (response) {
         triviaList = response.data.results;
         console.log(triviaList)
 
         
-    if (startGame) {
+    // if (startGame) {
         gameLoop()
-    }
+    // }
     
     function gameLoop() {
 
@@ -171,12 +177,10 @@ function callAPI () {
                 messageBoard.innerHTML = '<h1> Time Left: <br>' + data + '</h1>';
             }
             else if(data === 0) {
-                messageBoard.innerHTML = '<h1> Time\'s Up!! ' + data + '</h1>';
+                messageBoard.innerHTML = '<h1> Time\'s Up!!</h1>';
                 userChoice = answer;
                 console.log("answer", answer)
-                socket.emit('choice', {
-                    answer: answer
-                }); 
+                sendAnswer(answer) 
             }
             questionBoard.style.display = 'block';
             statsA.style.display = 'none';
@@ -206,7 +210,6 @@ function callAPI () {
                 console.log("currentUser",currentUser)
                 socket.once('loser', function(data) {
                     usersArray = data.users
-                    console.log("Updated users from backend line 218", usersArray)
                 })
             }
             else {
@@ -221,14 +224,12 @@ function callAPI () {
                 console.log("currentUser",currentUser)
                 socket.once('loser', function(data) {
                     usersArray = data.users
-                    console.log("Updated users from backend line 218", usersArray)
                 })
                
             }
             var setInPlay = setTimeout(function() {
                 socket.once('loser', function(data) {
                     usersArray = data.users
-                    console.log("Updated users from backend line 229", usersArray)
                 })
                 // win/lose functionality
                 if(triviaList.length > 0) {
