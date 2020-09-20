@@ -70,23 +70,31 @@ io.on('connection', function(socket){
 
         let losersArray = []
         socket.on('loser', function(data) {
-            // losersArray.push(data.currentUserId)
-            // console.log('loserarray', losersArray)
-            // console.log("user to remove", data.currentUserId)
-            // const loser = users.findIndex(user => user.id === data.currentUserId);
-            // console.log("L",loser)
             const loser = userLeaves(socket.id)
-            // if(loser) {
-            //     users[loser].loser = true;
-            // }
-            // if (loser) {
-                // data.currentUser.loser = true;
-                io.to(user.room).emit('loser', {
-                    users: getRoomUsers(user.room),
-                })
-                console.log("minus loser user list", users)
-            // }
+            var sendNonLosers = setTimeout(function() {
+            io.to(user.room).emit('loser', {
+                users: getRoomUsers(user.room),
+            })
+        }, 2000)
+            console.log("minus loser user list", users)
+
+
         })
+        // losersArray.push(data.currentUserId)
+        // console.log('loserarray', losersArray)
+        // console.log("user to remove", data.currentUserId)
+        // // const loser = users.findIndex(user => user.id === data.currentUserId);
+        // // console.log("L",loser)
+        // // if(loser > -1) {
+        // //     users[loser].loser = true;
+        // // }
+        // // if (loser) {
+        //     // data.currentUser.loser = true;
+        //     io.to(user.room).emit('loser', {
+        //         users: getRoomUsers(user.room),
+        //     })
+        //     console.log("minus loser user list", users)
+        // // }
        
 
         let users = getRoomUsers(user.room);

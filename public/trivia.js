@@ -22,23 +22,9 @@ var statsB = document.getElementById('stats-b');
 var statsC = document.getElementById('stats-c');
 var statsD = document.getElementById('stats-d');
 
-// socket.on('getTriviaList', function(triviaList) {
-//     triviaList = triviaList
-//     console.log("List from backend", triviaList)
-    
-//     socket.emit('getTriviaList', {
-//         triviaList: triviaList
-//     });
-//     console.log("PLEASE",triviaList)
-//     // console.log(triviaList.shift())
-// })
-
-// General Knowledge 15 https://opentdb.com/api.php?amount=15&category=9&difficulty=easy&type=multiple
-// Film 15 https://opentdb.com/api.php?amount=15&category=11&difficulty=easy&type=multiple
-// History 15 https://opentdb.com/api.php?amount=15&category=23&difficulty=easy&type=multiple
-
+var btn = document.getElementById('btn-leave');
+var leaveBtn = document.getElementById('btn-loser-leave');
 var answers = document.querySelectorAll('.answer');
-
 
 let startGame = false;
 let answer = ""
@@ -68,6 +54,7 @@ d.addEventListener('click', clickD)
 let waitingRoomMsg = "Waiting for more players..."
 messageBoard.innerHTML = '<h1>' + waitingRoomMsg + '</h1>'
 questionBoard.style.display = 'none';
+leaveBtn.style.visibility = "hidden";
 
 // Emit events
 
@@ -76,7 +63,6 @@ function preQuestion() {
     socket.emit('preQuestion', {
         questionNumber: (j)
     })
-    // j++;
 }
 
 // Which question to show
@@ -106,20 +92,27 @@ var usersArray
 var roomName
 var currentUser
 var category
+
 // Listen for roomUsers
 socket.on('roomUsers', function(data){
     usersArray = data.users
     roomName = data.room
     console.log("Users",usersArray)
     
-    if(roomName == "General Knowledge") {
-        category = 9
+    if(roomName == "Celebrities") {
+        category = 26
     }
     else if (roomName == "Film") {
         category = 11
     }
     else if (roomName == "History") {
         category = 23
+    }
+    else if (roomName == "Mythology") {
+        category = 20
+    }
+    else if (roomName == "Computers") {
+        category = 18
     }
     callAPI()
 })
@@ -132,36 +125,43 @@ var loser = false
 var selectQuestion
 let i = 0
 let j = 0
-
-// socket.on('startGame', function(data) {
-    startGame = true;
-// })
-
-
-//Game Loop
-
+startGame = true;
 answer = ""
 userChoice = ""
 correctAnswer = ""
 console.log("start game");
 
+//Game Loop
+
+
 function callAPI () {
 
+    
+    axios.get(`https://opentdb.com/api.php?amount=3&category=${category}&difficulty=easy&type=multiple`)
+    .then(function (response) {
+        triviaList = response.data.results;
+        console.log(triviaList)
+        // selectQuestion = triviaList.shift()
+        // console.log("Select Question", selectQuestion)
+        // })
 
-axios.get(`https://opentdb.com/api.php?amount=3&category=${category}&difficulty=easy&type=multiple`)
-.then(function (response) {
-    triviaList = response.data.results;
-    console.log(triviaList)
-    // selectQuestion = triviaList.shift()
-    // console.log("Select Question", selectQuestion)
-    // })
+        // var film = document.getElementsByTagName("option").Film
+        // var history = document.getElementsByTagName("option").History
+        // var celebrities = document.getElementsByTagName("option").Celebrities
+        // var computers = document.getElementsByTagName("option").Computers
+        // var mythology = document.getElementsByTagName("option").Mythology
+        // .style.display = 'none';
 
+        
     if (startGame) {
         gameLoop()
     }
     
     function gameLoop() {
-        
+        // if (category === 26) {
+        //     celebrities.style.display = 'none';
+        // }
+        // categoryListItem.style.display = 'none';
         if (j === 0) {
             selectQuestion = triviaList.shift()
             console.log("Select Question", selectQuestion)
@@ -172,7 +172,6 @@ axios.get(`https://opentdb.com/api.php?amount=3&category=${category}&difficulty=
         }
         // Which # question to show
         preQuestion()
-        // j++;
 
         socket.once('preQuestion', function(message) {
             messageBoard.innerHTML = '<h1>' + message + '</h1>'
@@ -186,7 +185,7 @@ axios.get(`https://opentdb.com/api.php?amount=3&category=${category}&difficulty=
                 messageBoard.innerHTML = '<h1> Time Left: <br>' + data + '</h1>';
             }
             else if(data === 0) {
-                messageBoard.innerHTML = '<h1> Time\'s Up!!' + data + '</h1>';
+                messageBoard.innerHTML = '<h1> Time\'s Up!! ' + data + '</h1>';
                 userChoice = answer;
                 console.log("answer", answer)
                 socket.emit('choice', {
@@ -203,7 +202,7 @@ axios.get(`https://opentdb.com/api.php?amount=3&category=${category}&difficulty=
 
         sendQuestion(selectQuestion)
 
-        socket.once('choice', function(data) {
+        socket.on('choice', function(data) {
             answer = data.answer
             statsA.style.display = 'inline-block';
             statsB.style.display = 'inline-block';
@@ -228,8 +227,12 @@ axios.get(`https://opentdb.com/api.php?amount=3&category=${category}&difficulty=
                 socket.emit('loser', {
                     currentUserId: currentUser.id
                 })
-                messageBoard.innerHTML = '<h1>oops</h1>'
-                // currentUser.loser = true;
+                messageBoard.innerHTML = '<h1>OOPS</h1>'
+                btn.style.visibility = "hidden";
+                leaveBtn.style.visibility = "visible";
+                // btn.innerHTML = 'You lost. Click here to exit.'
+                // btn.innerHTML.style.margin = '0px 0px 0px calc(50% - 100px)';
+                currentUser.loser = true;
                 console.log("currentUser",currentUser)
                 socket.once('loser', function(data) {
                     usersArray = data.users
@@ -260,35 +263,24 @@ axios.get(`https://opentdb.com/api.php?amount=3&category=${category}&difficulty=
                     }
                 }
                 else if(triviaList.length === 0) {
+                    var winningNames = ''
                     if (usersArray.length > 1) {
-                        messageBoard.innerHTML += '<h1 The winners are...>'
-                        for(let i = 0; i < usersArray.length; i++) {
-                            messageBoard.innerHTML += '<br> ' + usersArray[i].username
+                        for(let i = 0; i < usersArray.length - 1; i++) {
+                            winningNames += usersArray[i].username+ ", "
                         }
+                        messageBoard.innerHTML = '<h1>The winners are...' + winningNames +" and " + usersArray[usersArray.length - 1].username + "!!!</h1>"
                     }
                     else if (usersArray.length === 1) {
-                        messageBoard.innerHTML = '<h1>'+ usersArray[0].username + ' is the WINNER!</h1>'
+                        if (usersArray[i].loser === false) {
+                            messageBoard.innerHTML = '<h1>'+ usersArray[0].username + ' is the WINNER!</h1>'
+                        }
                     }
                     else if(usersArray.length === 0) {
                         console.log("List > 0 and users = 0")
                         messageBoard.innerHTML = '<h1> Oooo yikes...no one is a winner today!</h1>'
                     }
                 }
-                // else if (triviaList.length === 0 && usersArray.length == 1) {
-                //     messageBoard.innerHTML = '<h1>'+ usersArray[0].username + ' is the WINNER!</h1>'
-                // }
-                // else if (triviaList.length === 0 && usersArray.length > 1) {
-                //     for(let i = 0; i < usersArray.length; i++) {
-                //         if(usersArray[i].loser === false) {
-                //             console.log("winners",usersArray[i])
-                //             messageBoard.innerHTML += '<h1>'+ usersArray[i].username + ' is a WINNER!</h1>'
-                //         }
-                //         else {
-                //             messageBoard.innerHTML += '<h1> Oooo yikes...no one is a winner today!</h1>'
-                //         }
-                //     }
-                // }
-            }, 3000)
+            }, 5000)
         })
 
         socket.once('question', data=> {
@@ -300,10 +292,11 @@ axios.get(`https://opentdb.com/api.php?amount=3&category=${category}&difficulty=
                 correctAnswer = data.correctAnswer
             })
         }
-})
-.catch(function (err) {
-    console.log(`Error was made:\n ${err}`);
-})
+    })
+    .catch(function (err) {
+        console.log(`Error was made:\n ${err}`);
+    })
+    // categoryListItem.style.display = 'block';
 }
 
 // Listen for events

@@ -6,6 +6,9 @@ body {
     width: 100%;
     height: 100px;
     border: solid black 1px;
+    padding-top: 33px;
+    background-color: rgba(154, 66, 189, .75);
+    color: white;
 }
 
 #question-board {
@@ -68,7 +71,7 @@ h1 {
     width: 35%;
 }
 
-.btn-leave{
+#btn-leave{
     border: solid black 1px;
     padding: 10px;
     background-color: rgba(243, 127, 60, 06);
@@ -76,18 +79,28 @@ h1 {
     width: 50px;
     margin-left: calc(50% - 40px);
 }
+#btn-loser-leave{
+    border: solid black 1px;
+    padding: 10px;
+    background-color: rgba(243, 127, 60, 06);
+    text-align: center;
+    width: 50px;
+    margin-left: calc(50% - 100px);
+}
 
 body {
     background-image: url('./assets/wolfgangRottmannUnsplash.jpg');
 }
 
 .title {
-    height: 73px;
+    height: 100px;
     border: solid black 1px;
     margin-top: 0px;
     text-align: center;
     padding-top: 40px;
-    background-color: rgba(225,225,225,.5);
+    font-size: 50px;
+    background-color: rgba(225,225,225,.8);
+    color: rgb(190, 135, 16);
 }
 
 #gameboard {
