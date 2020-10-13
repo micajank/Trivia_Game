@@ -32,7 +32,7 @@ Sockets.io
 After making it through steps 1-7 of initial setup, I discovered the conflicting processes of sockets and react. After trying everything I could think of, as well as reaching out to colleagues (without success as no one I know has tried to use React with sockets) I have decided to start again with a more common stack for sockets: Express/Node backend, with simple HTML, CSS, and JavaScript in the front end.
 
 Link to Original Repository for React Project:
-https://github.com/micajank/HQ_Trivia_Project
+https://github.com/micajank/Trivia_Time
 
 
 ### Restart Steps
